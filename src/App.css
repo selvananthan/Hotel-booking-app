@@ -1,0 +1,50 @@
+/* src/App.css */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  background-size: cover;
+  background-position: center;
+}
+
+.App {
+  text-align: center;
+}
+
+.header {
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background for better text visibility */
+  color: white;
+}
+
+.hotel-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hotel {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 10px;
+  width: 30px;
+  background: rgba(255, 255, 255, 0.8); /* Slightly transparent background for better readability */
+}
+
+.booking-form, .confirmation, .login-form, .register-form {
+  margin: 20px;
+  background: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+  padding: 20px;
+  border-radius: 8px;
+}
+.css-5flwkf {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    margin-top: 24px;
+    flex-direction: column;
+}
