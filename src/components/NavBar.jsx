@@ -75,7 +75,8 @@ const NavBar = ({ currentTab, onTabChange }) => {
   const handleToggle = () => setIsLogin(!isLogin);
   const loginData={
     "username": username,
-    "password": password
+    "password": password,
+    "email" :email
   }
   const handleSubmit = (event) => {
     event.preventDefault();
