@@ -55,7 +55,7 @@ const NavBar = ({ currentTab, onTabChange }) => {
 
   useEffect(() => {
     if (token) {
-      axios.get('http://localhost:5000/api/auth/profile', {
+      axios.get('https://hotel-booking-app-backend-main.onrender.com/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(response => {
@@ -80,8 +80,8 @@ const NavBar = ({ currentTab, onTabChange }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const url = isLogin
-      ? 'http://localhost:5000/api/auth/login'
-      : 'http://localhost:5000/api/auth/register';
+      ? 'https://hotel-booking-app-backend-main.onrender.com/api/auth/login'
+      : 'https://hotel-booking-app-backend-main.onrender.com/api/auth/register';
       const config = {
         headers: {
           'Content-Type': 'application/json', // You can set other headers as needed

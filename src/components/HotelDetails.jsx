@@ -12,12 +12,12 @@ const HotelDetails = () => {
 
     useEffect(() => {
         // Fetch hotel details by ID
-        axios.get(`http://localhost:5000/api/hotels/${id}`)
+        axios.get(`https://hotel-booking-app-backend-main.onrender.com/api/hotels/${id}`)
             .then(response => setHotel(response.data))
             .catch(error => console.error("There was an error fetching the hotel details!", error));
 
         // Fetch reviews for the specific hotel by hotel ID
-        axios.get(`http://localhost:5000/api/reviews/${id}`)
+        axios.get(`https://hotel-booking-app-backend-main.onrender.com/api/reviews/${id}`)
             .then(response => setReviews(response.data))
             .catch(error => console.error("There was an error fetching the reviews!", error));
     }, [id]);

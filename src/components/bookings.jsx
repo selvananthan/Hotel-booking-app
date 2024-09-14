@@ -10,7 +10,7 @@ const Bookings=()=>{
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.userId; // Adjust according to your token payload structure
         console.log("User ID:", userId);
-        const url = `http://localhost:5000/api/bookings/getbookings?userId=${userId}`;
+        const url = `https://hotel-booking-app-backend-main.onrender.com/api/bookings/getbookings?userId=${userId}`;
       // Fetch bookings from the API
       axios.get(url) // Adjust the endpoint as needed
         .then((response) =>{ 

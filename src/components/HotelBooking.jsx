@@ -14,7 +14,7 @@ const HotelBooking = () => {
 
   const handleBooking = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/hotels/${id}/book`, {
+      const response = await axios.post(`https://hotel-booking-app-backend-main.onrender.com/api/hotels/${id}/book`, {
         guestName,
         checkInDate,
         checkOutDate,
@@ -39,7 +39,7 @@ const HotelBooking = () => {
           };
 
           // Verify the payment
-          const result = await axios.post('http://localhost:5000/api/payment/verify', paymentData);
+          const result = await axios.post('https://hotel-booking-app-backend-main.onrender.com/api/payment/verify', paymentData);
 
           if (result.data.message === 'Payment verified successfully') {
             alert('Payment Successful! Booking confirmed.');

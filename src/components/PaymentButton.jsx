@@ -8,7 +8,7 @@ const PaymentButton = ({ amount }) => {
 
   const handlePayment = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/payment', {
+      const response = await axios.post('https://hotel-booking-app-backend-main.onrender.com/api/payment', {
         amount, // Amount in smallest currency unit (e.g., 100 for INR 1.00)
         currency: 'INR'
       });
@@ -30,7 +30,7 @@ const PaymentButton = ({ amount }) => {
           };
 
           // Verify payment on the backend
-          const result = await axios.post('http://localhost:5000/api/payment/verify', paymentData);
+          const result = await axios.post('https://hotel-booking-app-backend-main.onrender.com/api/payment/verify', paymentData);
 
           if (result.data.message === 'Payment verified successfully') {
             alert('Payment Successful!');

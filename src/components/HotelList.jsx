@@ -19,6 +19,37 @@ const StyledCard = styled(Card)(({ theme }) => ({
   boxShadow: `0 4px 8px ${theme.palette.action.disabledBackground}`,
 }));
 
+  const handlePayment = async (hotel) => {
+    // Step 1: Create order by calling the backend
+    const { data } = await axios.post("https://hotel-booking-app-backend-main.onrender.com/api/payment/create-order", {
+      amount: hotel.price, // amount to be paid
+    });
+
+    // Step 2: Open Razorpay form for payment
+    const options = {
+      key: "rzp_live_62NyqXvRsbAeVy", // Replace with your Razorpay key ID
+      amount: data.amount, // Amount is in paise
+      currency: data.currency,
+      name: "Hotel Booking",
+      description: "Payment for booking",
+      order_id: data.id, // Order ID from backend
+      handler: function (response) {
+        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+      },
+      prefill: {
+        name: "Your Name",
+        email: "your.email@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
 // Button styles
 const StyledButton = styled(Button)(({ theme }) => ({
   borderRadius: '8px',
@@ -64,16 +95,18 @@ const HotelList = () => {
   const [sortOption, setSortOption] = useState('price');
   const [search, setSearch] = useState('');
   const [openBookingDialog, setOpenBookingDialog] = useState(false);
+ const  [openPayementDialog, setOpenPayementDialog] = useState(false);
   const [openReviewDialog, setOpenReviewDialog] = useState(false);
   const [openCompareDialog, setOpenCompareDialog] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [review, setReview] = useState('');
+  const[showPayment,setshowPayment]=useState(false)
   const [bookingDetails, setBookingDetails] = useState({ guestname: '', phoneNumber:null, startDate: '', endDate: '',totalPrice:null, });
   const [compareHotels, setCompareHotels] = useState([]);
 
   useEffect(() => {
     // Fetch hotel details from MongoDB via backend API
-    // axios.get('http://localhost:5000/api/hotels')
+    // axios.get('https://hotel-booking-app-backend-main.onrender.com/api/hotels')
 
     //   .then(response => setHotels(response.data))
     //   .catch(error => console.error("There was an error fetching the hotels!", error));
@@ -326,9 +359,16 @@ const HotelList = () => {
   };
 
   const handleBookingDialogClose = () => {
+    setshowPayment(false)
     setOpenBookingDialog(false);
+    
     setBookingDetails({ guestname: '', startDate: '', endDate: '' });
   };
+  const handlePaymentDialogClose = () => {
+    setOpenPayementDialog(false);
+  
+  };
+
 
   const handleReviewDialogClose = () => {
     setOpenReviewDialog(false);
@@ -342,10 +382,10 @@ const HotelList = () => {
 
   const handleBookingSubmit = (event) => {
     
-    debugger
     event.preventDefault();
+    setOpenPayementDialog(true)
     if (selectedHotel) {
-      axios.post(`http://localhost:5000/api/bookings/newbook`, bookingDetails)
+      axios.post(`https://hotel-booking-app-backend-main.onrender.com/api/bookings/newbook`, bookingDetails)
         .then(() => {
           alert('Booking successful!');
           handleBookingDialogClose();
@@ -357,7 +397,7 @@ const HotelList = () => {
   const handleReviewSubmit = (event) => {
     event.preventDefault();
     if (selectedHotel) {
-      axios.post(`http://localhost:5000/api/hotels/${selectedHotel._id}/reviews`, { review })
+      axios.post(`https://hotel-booking-app-backend-main.onrender.com/api/hotels/${selectedHotel._id}/reviews`, { review })
         .then(() => {
           alert('Review submitted successfully!');
           handleReviewDialogClose();
@@ -454,18 +494,26 @@ const HotelList = () => {
       <Dialog open={openBookingDialog} onClose={handleBookingDialogClose} aria-labelledby="booking-dialog-title">
         <DialogTitle id="booking-dialog-title">Book a Room at {selectedHotel?.name}</DialogTitle>
         <DialogContent>
-          <Box component="form" onSubmit={handleBookingSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+         { !showPayment ? <Box component="form"  sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField margin="dense" label="Guest Name" fullWidth value={bookingDetails.guestname} onChange={e => setBookingDetails({ ...bookingDetails, guestname: e.target.value })} required />
             <TextField label="Phone Number"  value={bookingDetails.phoneNumber} onChange={e => setBookingDetails({ ...bookingDetails, phoneNumber: Number(e.target.value) })} fullWidth sx={{ mb: 2 }} />
             <TextField margin="dense" label="Check-in Date" type="date" fullWidth value={bookingDetails.startDate} onChange={e => setBookingDetails({ ...bookingDetails, startDate: e.target.value })} InputLabelProps={{ shrink: true }} required />
             <TextField margin="dense" label="Check-out Date" type="date" fullWidth value={bookingDetails.endDate} onChange={e => setBookingDetails({ ...bookingDetails, endDate: e.target.value })} InputLabelProps={{ shrink: true }} required />
             <DialogActions>
               <Button onClick={handleBookingDialogClose} color="primary">Cancel</Button>
-              <Button type="submit" color="primary">Book Now</Button>
+              <Button color="primary" onClick={()=>{
+                setshowPayment(true)
+              }}>Book Now</Button>
             </DialogActions>
           </Box>
+         : <Box>
+            <h1>₹{selectedHotel?.price} </h1>
+            <Button type="submit" onClick={handlePayment(selectedHotel)}  >Make a Payment</Button>
+          </Box>}
         </DialogContent>
       </Dialog>
+     
+
 
       {/* Review Dialog */}
       <Dialog open={openReviewDialog} onClose={handleReviewDialogClose} aria-labelledby="review-dialog-title">

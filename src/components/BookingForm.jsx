@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { Box, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import axios from 'axios';
 
@@ -10,7 +10,27 @@ const BookingForm = ({ open, onClose, hotel }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const handlePayement=(src)=>{
+      return new Promise((resolve)=>{
+     const script=document.createElement('script')
+     script.src=src
+       script.onload=()=>{
+        resolve(true)
 
+       }
+       script.onerror=()=>{
+        resolve(false);
+       }
+       document.body.appendChild(script)
+       
+      })
+
+
+
+    }
+   useEffect(()=>{
+    handlePayement("https://checkout.razorpay.com/v1/checkout.js")
+   },[])
     const bookingDetails = {
       hotelId: hotel._id,
       name,
@@ -18,7 +38,7 @@ const BookingForm = ({ open, onClose, hotel }) => {
       checkOutDate
     };
 
-    axios.post('http://localhost:5000/api/bookings', bookingDetails)
+    axios.post('https://hotel-booking-app-backend-main.onrender.com/api/bookings', bookingDetails)
       .then(response => {
         alert('Booking successful!');
         onClose();
@@ -71,8 +91,10 @@ const BookingForm = ({ open, onClose, hotel }) => {
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button type="submit" form="booking-form" variant="contained" color="primary">Book Now</Button>
+        <Button onClick={displayRazorpayModal} >Make Payment</Button>
       </DialogActions>
     </Dialog>
+
   );
 };
 
