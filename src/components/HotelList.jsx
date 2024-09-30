@@ -422,7 +422,7 @@ const HotelList = () => {
   // });
   const filteredAndSortedHotels = hotels
   .filter(hotel => {
-    const matchesLocation = selectedFilter === 'all' || hotel.location === selectedFilter;
+    const matchesLocation = selectedFilter === 'all' || hotel.location === selectedFilter ||selectedFilter === '' ;
     const matchesSearch = !search || hotel.name.toLowerCase().includes(search.toLowerCase());
     return matchesLocation && matchesSearch; // Combine both filters
   })
