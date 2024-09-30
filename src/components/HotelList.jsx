@@ -103,6 +103,7 @@ const HotelList = () => {
   const[showPayment,setshowPayment]=useState(false)
   const [bookingDetails, setBookingDetails] = useState({ guestname: '', phoneNumber:null, startDate: '', endDate: '',totalPrice:null, });
   const [compareHotels, setCompareHotels] = useState([]);
+  
 
   useEffect(() => {
     // Fetch hotel details from MongoDB via backend API
@@ -115,7 +116,7 @@ const HotelList = () => {
           "_id": "66b9a6ceaab9dfe4a31cbfde",
           "name": "Kaldan Samudhra Palace",
           "price": 9000,
-          "location": "Mahabalipuram, Tamil Nadu 603103",
+          "location": "Mahabalipuram",
           "amenities": [
               "Free WiFi",
               "Golf Course",
@@ -128,7 +129,7 @@ const HotelList = () => {
       {
           "_id": "66ba3c2aaab9dfe4a31cc035",
           "name": "Vivanta by Taj",
-          "location": "Coimbatore, Tamil Nadu",
+          "location": "Coimbatore",
           "description": "Stylish hotel offering a contemporary stay experience.",
           "amenities": [
               "Free WiFi",
@@ -143,9 +144,9 @@ const HotelList = () => {
       },
       {
           "_id": "66b9a6ceaab9dfe4a31cbfdc",
-          "name": "Leela Palace Chennai",
+          "name": "Leela Palace chennai",
           "price": 10000,
-          "location": "Chennai, Tamil Nadu",
+          "location": "chennai",
           "amenities": [
               "Free WiFi",
               "Sea view",
@@ -159,7 +160,7 @@ const HotelList = () => {
           "_id": "66b9a6ceaab9dfe4a31cbfdd",
           "name": "ITC Grand Chola",
           "price": 11000,
-          "location": "Chennai, Tamil Nadu",
+          "location": "chennai",
           "amenities": [
               "Free WiFi",
               "Spa",
@@ -173,7 +174,7 @@ const HotelList = () => {
           "_id": "66b9d391aab9dfe4a31cbfe3",
           "name": "Taj Fisherman's Cove Resort",
           "price": 11000,
-          "location": "Chennai, Tamil Nadu",
+          "location": "chennai",
           "amenities": [
               "Free WiFi",
               "Spa",
@@ -186,7 +187,7 @@ const HotelList = () => {
       {
           "_id": "66ba3c2aaab9dfe4a31cc037",
           "name": "Heritage Madurai",
-          "location": "Madurai, Tamil Nadu",
+          "location": "Madurai",
           "description": "Historic resort offering a luxurious experience amidst nature.",
           "amenities": [
               "Free WiFi",
@@ -204,7 +205,7 @@ const HotelList = () => {
           "_id": "66b9a6ceaab9dfe4a31cbfda",
           "name": "Hotel Taj Mahal Palace",
           "price": 12000,
-          "location": "Mumbai, Maharashtra",
+          "location": "Maharashtra",
           "amenities": [
               "Free WiFi",
               "Pool",
@@ -217,7 +218,7 @@ const HotelList = () => {
       {
           "_id": "66ba3c2aaab9dfe4a31cc034",
           "name": "Radisson Blu Resort Temple Bay",
-          "location": "Mahabalipuram, Tamil Nadu",
+          "location": "Mahabalipuram",
           "description": "Beach resort with modern amenities near ancient temples.",
           "amenities": [
               "Free WiFi",
@@ -235,7 +236,7 @@ const HotelList = () => {
           "_id": "66b9a6ceaab9dfe4a31cbfdb",
           "name": "The Oberoi Udaivilas",
           "price": 15000,
-          "location": "Udaipur, Rajasthan",
+          "location": "Rajasthan",
           "amenities": [
               "Free WiFi",
               "Lake view",
@@ -248,8 +249,8 @@ const HotelList = () => {
       {
           "_id": "66ba3c2aaab9dfe4a31cc032",
           "name": "Taj Coromandel",
-          "location": "Chennai, Tamil Nadu",
-          "description": "Luxury 5-star hotel located in the heart of Chennai.",
+          "location": "chennai",
+          "description": "Luxury 5-star hotel located in the heart of chennai.",
           "amenities": [
               "Free WiFi",
               "Swimming Pool",
@@ -264,7 +265,7 @@ const HotelList = () => {
       {
           "_id": "66ba3c2aaab9dfe4a31cc036",
           "name": "Le Villagio Resort Domes",
-          "location": "Chennai, Tamil Nadu",
+          "location": "chennai",
           "description": "A grand luxury hotel with a blend of tradition and modernity.",
           "amenities": [
               "Free WiFi",
@@ -281,7 +282,7 @@ const HotelList = () => {
       {
           "_id": "66ba3c2aaab9dfe4a31cc033",
           "name": "Spicetree Rajakumari",
-          "location": "Chennai, Tamil Nadu",
+          "location": "chennai",
           "description": "Opulent beachfront hotel with luxurious rooms and fine dining.",
           "amenities": [
               "Free WiFi",
@@ -307,6 +308,10 @@ const HotelList = () => {
   const handleSortClose = () => setSortAnchorEl(null);
 
   const handleFilterSelect = (filter) => {
+    debugger
+    if(filter==='all'){
+      setSelectedFilter(hotels)
+    }
     setSelectedFilter(filter);
     handleFilterClose();
   };
@@ -319,7 +324,6 @@ const HotelList = () => {
   const handleSearchChange = (event) => setSearch(event.target.value);
 
   const handleBookNow = (hotel) => {
-    debugger
     setBookingDetails(prevDetails => ({
       ...prevDetails, // Copy previous details
       totalPrice:hotel.price 
@@ -406,17 +410,27 @@ const HotelList = () => {
     }
   };
 
-  const filteredHotels = hotels.filter(hotel => 
-    (selectedFilter ? hotel.location === selectedFilter : true) && 
-    (search ? hotel.name.toLowerCase().includes(search.toLowerCase()) : true)
-  );
+  // const filteredHotels = hotels.filter(hotel => 
+  //   (selectedFilter ? hotel.location === selectedFilter : true) && 
+  //   (search ? hotel.name.toLowerCase().includes(search.toLowerCase()) : true)
+  // );
 
-  const sortedHotels = filteredHotels.sort((a, b) => {
+  // const sortedHotels = filteredHotels.sort((a, b) => {
+  //   if (sortOption === 'price') return a.price - b.price;
+  //   if (sortOption === 'rating') return b.rating - a.rating;
+  //   return 0;
+  // });
+  const filteredAndSortedHotels = hotels
+  .filter(hotel => {
+    const matchesLocation = selectedFilter === 'all' || hotel.location === selectedFilter;
+    const matchesSearch = !search || hotel.name.toLowerCase().includes(search.toLowerCase());
+    return matchesLocation && matchesSearch; // Combine both filters
+  })
+  .sort((a, b) => {
     if (sortOption === 'price') return a.price - b.price;
     if (sortOption === 'rating') return b.rating - a.rating;
-    return 0;
+    return 0; // No sorting
   });
-
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -434,17 +448,19 @@ const HotelList = () => {
             anchorEl={filterAnchorEl}
             open={Boolean(filterAnchorEl)}
             onClose={handleFilterClose}>
-            <MenuItem onClick={() => handleFilterSelect('Delhi')}>Delhi</MenuItem>
-            <MenuItem onClick={() => handleFilterSelect('Mumbai')}>Mumbai</MenuItem>
-            <MenuItem onClick={() => handleFilterSelect('Chennai')}>Chennai</MenuItem>
-            <MenuItem onClick={() => handleFilterSelect('Kolkata')}>Kolkata</MenuItem>
-            <MenuItem onClick={() => handleFilterSelect('')}>Clear Filter</MenuItem>
+              <MenuItem onClick={() => handleFilterSelect('chennai')}>chennai</MenuItem>
+              <MenuItem onClick={() => handleFilterSelect('Coimbatore')}>Coimbatore</MenuItem>
+              <MenuItem onClick={() => handleFilterSelect('Madurai')}>Madurai</MenuItem>
+            <MenuItem onClick={() => handleFilterSelect('Maharashtra')}>Maharashtra</MenuItem>
+            <MenuItem onClick={() => handleFilterSelect('Rajasthan')}>Rajasthan</MenuItem>
+            <MenuItem onClick={() => handleFilterSelect('all')}>Clear Filters</MenuItem>
+
           </Menu>
           <Button
             aria-controls="sort-menu"
             aria-haspopup="true"
             onClick={handleSortClick}
-            startIcon={<SortIcon />}>
+            startIcon={<SortIcon />}> 
             Sort By
           </Button>
           <Menu
@@ -472,7 +488,7 @@ const HotelList = () => {
         />
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 2 }}>
-        {sortedHotels.map(hotel => (
+        {filteredAndSortedHotels.map(hotel => (
           <StyledCard key={hotel._id}>
             <CardMedia component="img" height="140" image={hotel.image} alt={hotel.name} />
             <CardContent>

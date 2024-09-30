@@ -11,7 +11,7 @@ const theme = createTheme({
     secondary: {
       main: '#dc004e',
     },
-    mode: 'light', // or 'dark'
+    mode: 'light',
   },
 });
 

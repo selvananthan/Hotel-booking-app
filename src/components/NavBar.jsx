@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Tabs, Tab, Toolbar, Typography, Box, Button, Modal, TextField, IconButton, Menu, MenuItem } from '@mui/material';
+import { AppBar, Tabs, Tab, Toolbar, Typography, Box, Button, Modal, TextField, IconButton, Menu, MenuItem, Autocomplete } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import BlogContent from './BlogContent'; 
@@ -7,7 +7,6 @@ import HomeContent from './HomeContent';
 import HotelList from './HotelList';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { json } from 'react-router-dom';
 import Bookings from './bookings';
 
 const modalStyle = {
@@ -34,6 +33,19 @@ const StyledButton = styled(Button)({
   borderRadius: '8px',
 });
 
+const SearchButton = styled(Button)({
+  backgroundColor: '#ff5722', // Change color to differentiate
+  color: '#fff',
+  '&:hover': {
+    backgroundColor: '#e64a19', // Darker shade on hover
+  },
+  padding: '10px 20px',
+  borderRadius: '20px',
+  fontSize: '14px',
+  fontWeight: 'bold',
+  marginLeft: '10px',
+});
+
 const FormContainer = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
@@ -43,65 +55,54 @@ const FormContainer = styled(Box)({
 
 const NavBar = ({ currentTab, onTabChange }) => {
   const [modalIsOpen, setModalOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState('home'); 
+  const [activeTab, setActiveTab] = useState('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userDetails, setUserDetails] = useState(null); 
+  const [userDetails, setUserDetails] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  // Autocomplete options (this can be replaced with dynamic data)
+  const hotelOptions = [
+    { title: 'Chennai' },
+    { title: 'Mumbai' },
+    { title: 'Madurai' },
+    { title: 'Coimbatore' },
+    { title: 'Rajasthan' },
+  ];
 
   useEffect(() => {
-    if (token) {
-      axios.get('https://hotel-booking-app-backend-main.onrender.com/api/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(response => {
-          setUserDetails(response.data);
-          setIsLoggedIn(true);
-        })
-        .catch(error => {
-          console.error('Error fetching user details:', error);
-          setIsLoggedIn(false);
-        });
+    if(token){
+      setIsLogin(true)
     }
-  }, [token]);
+ 
+  },);
 
   const handleModalOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
-
   const handleToggle = () => setIsLogin(!isLogin);
-  const loginData={
-    "username": username,
-    "password": password,
-    "email" :email
-  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const url = isLogin
       ? 'https://hotel-booking-app-backend-main.onrender.com/api/auth/login'
       : 'https://hotel-booking-app-backend-main.onrender.com/api/auth/register';
-      const config = {
-        headers: {
-          'Content-Type': 'application/json', // You can set other headers as needed
-          'Authorization': 'Bearer your-token-here', // Example for Authorization header
-          // Add more headers if required
-        },
-      }
     const data = isLogin
-      ? loginData
+      ? { username, password }
       : { username, email, password };
-      console.log(data['username']);
-      const JSONdata=JSON.stringify(data)
     axios
-      .post(url,loginData,config)
+      .post(url, data)
       .then((response) => {
-        if (response &&response.data) {
-          alert(' Login Successfull');
+        if (response && response.data) {
+          alert('Login Successful');
+
           if (isLogin) {
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token',JSON.stringify(response.data));
             setToken(response.data.token);
           }
           handleClose();
@@ -116,7 +117,7 @@ const NavBar = ({ currentTab, onTabChange }) => {
   };
 
   const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue); 
+    setActiveTab(newValue);
     if (onTabChange) {
       onTabChange(newValue);
     }
@@ -131,14 +132,19 @@ const NavBar = ({ currentTab, onTabChange }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); 
-    setIsLoggedIn(false);
+    localStorage.removeItem('token');
+    setIsLogin(false);
     setUserDetails(null);
     setToken(null);
     handleMenuClose();
   };
 
   const open = Boolean(anchorEl);
+
+  const handleSearch = () => {
+    // Implement the search functionality here
+    console.log('Search:', searchQuery, selectedLocation);
+  };
 
   return (
     <>
@@ -163,18 +169,25 @@ const NavBar = ({ currentTab, onTabChange }) => {
               Stay-Inn.
             </Typography>
           </Box>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            textColor="inherit"
-            indicatorColor="secondary"
-            sx={{ flexGrow: 1 }}
-          >
-            <Tab label="Home" value="home" />
-            <Tab label="bookings" value="bookings" />
-            <Tab label="Blog" value="blog" />
-          </Tabs>
-          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
+
+          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'left', justifyContent: 'left' }}>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              textColor="inherit"
+              indicatorColor="secondary"
+            >
+              <Tab label="Home" value="home" />
+              <Tab label="Bookings" value="bookings" />
+              <Tab label="Blog" value="blog" />
+            </Tabs>
+          
+
+
+
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton
               color="inherit"
               component="a"
@@ -184,7 +197,7 @@ const NavBar = ({ currentTab, onTabChange }) => {
             >
               <GitHubIcon />
             </IconButton>
-            {isLoggedIn ? (
+            {isLogin ? (
               <>
                 <IconButton
                   color="inherit"
@@ -193,11 +206,7 @@ const NavBar = ({ currentTab, onTabChange }) => {
                 >
                   <AccountCircleIcon />
                 </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleMenuClose}
-                >
+                <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
                   <MenuItem onClick={() => alert('View Profile')}>Profile</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
@@ -207,7 +216,7 @@ const NavBar = ({ currentTab, onTabChange }) => {
                 variant="contained"
                 color="secondary"
                 onClick={handleModalOpen}
-                sx={{ color: '#fff', height: '100%', ml: 2 }}
+                sx={{ color: '#fff', height: '100%', ml: 2, borderRadius: 20 }}
               >
                 Login/Register
               </Button>
@@ -227,10 +236,7 @@ const NavBar = ({ currentTab, onTabChange }) => {
             >
               {isLogin ? 'Login to Your Account' : 'Create an Account'}
             </Typography>
-            <FormContainer
-              component="form"
-              onSubmit={handleSubmit}
-            >
+            <FormContainer component="form" onSubmit={handleSubmit}>
               <TextField
                 label="Username"
                 variant="outlined"
@@ -280,17 +286,16 @@ const NavBar = ({ currentTab, onTabChange }) => {
           </Box>
         </Modal>
       </AppBar>
+
       <Box sx={{ p: 4 }}>
         {activeTab === 'home' && (
           <>
-            <HomeContent /> 
-            <HotelList /> 
+            <HomeContent />
+            <HotelList searchQuery={searchQuery} location={selectedLocation} />
           </>
         )}
-        {activeTab === 'hotels' && <HotelList />} 
-        {activeTab === 'blog' && <BlogContent />} 
-        {activeTab === 'bookings' && <Bookings />} 
-        
+        {activeTab === 'bookings' && <Bookings />}
+        {activeTab === 'blog' && <BlogContent />}
       </Box>
     </>
   );

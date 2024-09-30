@@ -30,6 +30,7 @@ const HotelDetails = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
+
                     <Typography variant="h4" gutterBottom>{hotel.name}</Typography>
                     <Typography variant="h6">Price: ₹{hotel.price_per_night}</Typography>
                     <Typography variant="body1">{hotel.location}</Typography>

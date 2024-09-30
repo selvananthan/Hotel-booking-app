@@ -1,5 +1,3 @@
-// src/Checkout.jsx
-
 import React from 'react';
 import PaymentButton from '../PaymentButton';
 

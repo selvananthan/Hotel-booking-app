@@ -1,4 +1,3 @@
-// src/Footer.js
 import React from 'react';
 import { Box, Typography, Container, IconButton } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';

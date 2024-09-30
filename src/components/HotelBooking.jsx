@@ -1,5 +1,3 @@
-// src/HotelBooking.jsx
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, TextField, Box, Typography } from '@mui/material';
